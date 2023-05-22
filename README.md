@@ -11,3 +11,202 @@
 # 8.Enable VPC Flow Logs: This policy enables VPC flow logs, which capture information about IP traffic flowing in and out of VPCs. It aids in network traffic analysis, troubleshooting, and detecting potential security threats.
 # 9.Implement Least Privilege Access: This policy ensures that users and roles are granted only the minimum privileges required to perform their tasks. It helps limit the potential impact of compromised credentials and reduces the risk of accidental or malicious actions.
 # 10.Regularly Rotate Access Keys and Passwords: This policy mandates the periodic rotation of access keys and passwords for user accounts. It helps mitigate the impact of leaked or compromised credentials.
+
+# Termination VPC denial 
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": [
+        "ec2:DeleteVpc"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+
+# Requiring Encryption
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::example-bucket/*"
+      ],
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": "false"
+        }
+      }
+    }
+  ]
+}
+
+# Restricting public access to S3 buckets 
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": [
+        "s3:PutBucketAcl",
+        "s3:PutBucketPolicy"
+      ],
+      "Resource": [
+        "arn:aws:s3:::example-bucket"
+      ],
+      "Condition": {
+        "StringNotEquals": {
+          "aws:PrincipalArn": "arn:aws:iam::123456789012:root"
+        }
+      }
+    }
+  ]
+}
+
+# Enforcing (MFA)
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateAccessKey",
+        "iam:DeleteAccessKey",
+        "iam:UpdateAccessKey",
+        "iam:DeactivateMFADevice",
+        "iam:EnableMFADevice",
+        "iam:ResyncMFADevice"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:user/${aws:username}"
+      ],
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    }
+  ]
+}
+
+# Access control to AWS services 
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": "s3:*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:List*",
+        "s3:Get*"
+      ],
+      "Resource": "arn:aws:s3:::example-bucket/*"
+    }
+  ]
+}
+
+# Enabling loggign and monitoring 
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudtrail:CreateTrail",
+        "cloudtrail:DescribeTrails",
+        "cloudtrail:GetEventSelectors",
+        "cloudtrail:GetTrailStatus",
+        "cloudtrail:StartLogging",
+        "cloudtrail:StopLogging"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:PutRetentionPolicy"
+      ],
+      "Resource": "arn
+
+# Implementing security group restrictions 
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": ["ec2:AuthorizeSecurityGroupEgress", "ec2:RevokeSecurityGroupEgress"],
+      "Resource": "arn:aws:ec2:*:*:security-group/*",
+      "Condition": {
+        "Bool": {"aws:SecureTransport": "false"}
+      }
+    }
+  ]
+}
+
+# Enabling VPC flow logs
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["ec2:CreateFlowLogs", "ec2:DescribeFlowLogs", "ec2:DeleteFlowLogs"],
+      "Resource": "arn:aws:ec2:*:*:flow-log/*"
+    }
+  ]
+}
+
+# Implementing Least privilege access 
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": "ec2:*",
+      "Resource": "*",
+      "Condition": {
+        "StringNotLike": {
+          "aws:userid": "AROA**"
+        }
+      }
+    }
+  ]
+}
+
+# Rotating acess keys and passwords regularly
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": [
+        "iam:DeleteAccessKey",
+        "iam:UpdateAccessKey",
+        "iam:DeleteLoginProfile",
+        "iam:UpdateLoginProfile",
+        "iam:CreateLoginProfile"
+      ],
+      "Resource": "arn:aws:iam::*:user/${aws:username}",
+      "Condition": {
+        "NumericLessThan": {
+          "aws:MultiFactorAuthAge": "365"
+        }
+      }
+    }
+  ]
+}
