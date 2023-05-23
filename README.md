@@ -210,3 +210,21 @@
     }
   ]
 }
+
+#To allow AWS accounts within an AWS Organization, which fall under the root account, to use AWS credits, you need to follow these steps:
+
+#Identify the eligible accounts: Determine which accounts within your AWS Organization should have access to use AWS credits. Ensure that these accounts are linked to the organization and fall under the management of the root account.
+
+#Assign permission policies: In the AWS Management Console, sign in to the root account and access the AWS Organizations service. Navigate to the "Policies" section.
+
+#Create a new policy: Create a new service control policy (SCP) or modify an existing one to grant permissions for using AWS credits. SCPs are used to set permissions and restrictions for accounts within an organization.
+
+#Specify permissions for AWS credits: In the SCP, define the necessary permissions to allow the eligible accounts to use AWS credits. This may involve granting access to specific AWS services or actions related to credits, such as redeeming or applying credits to eligible services.
+
+#Attach the policy: Attach the SCP to the root or organizational unit (OU) that contains the eligible accounts. This ensures that the policy is applied to the desired accounts within the organization.
+
+#Verify and test: Once the policy is attached, verify that the eligible accounts can now use AWS credits. Test the functionality by attempting to redeem or apply credits within the permitted accounts.
+
+#It's important to note that AWS credits may have specific terms and conditions associated with them, including usage restrictions, expiration dates, and eligibility criteria. Ensure that you review and understand the terms of your specific AWS credits program to ensure compliance and proper usage.
+
+#If you have any specific questions or need further assistance, it's recommended to consult AWS Support or the AWS documentation for detailed guidance on managing credits within an AWS Organization.
